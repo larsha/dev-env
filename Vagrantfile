@@ -3,14 +3,11 @@
 
 $script = <<SCRIPT
   # Basics
-  sudo locale-gen "en_US.UTF-8"
+  sudo locale-gen sv_SE.UTF-8
   sudo apt-get update
   sudo apt-get install apt-utils
   sudo apt-get install tig
 
-  su ubuntu
-
-  # Programming languages
   sudo curl -sL https://deb.nodesource.com/setup_7.x | sudo -E bash -
   sudo apt-get update
   sudo apt-get install -y nodejs
@@ -19,7 +16,6 @@ $script = <<SCRIPT
   sudo apt-get update
   sudo apt-get install golang-go
 
-  # Vim
   mkdir -p /home/ubuntu/.vim/autoload /home/ubuntu/.vim/bundle && \
   curl -LSso /home/ubuntu/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
   git clone https://github.com/fatih/vim-go.git /home/ubuntu/.vim/bundle/vim-go
@@ -34,21 +30,24 @@ cat > /home/ubuntu/.vimrc << EOL
 execute pathogen#infect()
 syntax on
 filetype plugin indent on
+set number
 set runtimepath^=~/.vim/bundle/ctrlp.vim
+let g:nerdtree_tabs_open_on_console_startup=1
 set t_Co=256
 set background=dark
 colorscheme material-theme
-let g:nerdtree_tabs_open_on_console_startup=1
-set number
-set clipboard=unnamed
+hi Normal guibg=NONE ctermbg=NONE
+hi LineNr guibg=NONE ctermbg=NONE
 EOL
+
+chown -R ubuntu:ubuntu /home/ubuntu
 SCRIPT
 
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/xenial64"
   config.vm.hostname = "docker"
   config.vm.network "private_network", ip: "192.168.50.4"
-  
+
   config.vm.provider "virtualbox" do |v|
     v.memory = 12288
     v.cpus = 8
